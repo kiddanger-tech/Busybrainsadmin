@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Busy Brains Admin</title>
-  <meta name="robots" content="noindex,nofollow">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -16,361 +18,387 @@
       --green: #2f6b4f;
       --red: #9b3d32;
       --border: #d8d0c2;
-      --white: #fffdf8;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(28, 26, 23, 0.08);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
       background: var(--sand);
       color: var(--stone);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    button, input, select, textarea { font: inherit; }
-    button { cursor: pointer; }
-
-    .app {
-      width: 100%;
-      max-width: 760px;
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 18px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 25px;
-      letter-spacing: -.7px;
-    }
-
-    .brand p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .brand-mark {
-      width: 43px;
-      height: 43px;
-      border-radius: 13px;
-      background: var(--stone);
-      color: var(--sand);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 14px;
-    }
-
-    .panel h2 {
-      margin: 0 0 5px;
-      font-size: 18px;
-    }
-
-    .panel-subtitle {
-      margin: 0 0 16px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .field { margin-bottom: 13px; }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 12px;
-      font-weight: 750;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: var(--white);
-      color: var(--stone);
-      padding: 12px;
-      outline: none;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--clay);
-      box-shadow: 0 0 0 3px rgba(168, 98, 63, .1);
-    }
-
+    button,
+    input,
+    select,
     textarea {
-      min-height: 80px;
-      resize: vertical;
+      font: inherit;
     }
 
-    .button {
-      border: 0;
-      border-radius: 11px;
-      min-height: 42px;
-      padding: 0 15px;
-      font-weight: 750;
+    button {
+      cursor: pointer;
     }
 
-    .button-primary {
-      width: 100%;
-      background: var(--stone);
-      color: white;
+    .hidden {
+      display: none !important;
     }
 
-    .button-green {
-      background: var(--green);
-      color: white;
-    }
+    /* =========================
+       LOGIN
+    ========================= */
 
-    .button-red {
-      background: #f2deda;
-      color: var(--red);
-    }
-
-    .button-ghost {
-      background: #e7dfd2;
-      color: var(--stone);
-    }
-
-    .button:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .login-wrap {
+    #loginScreen {
       min-height: 100vh;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
     .login-card {
       width: 100%;
       max-width: 430px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px 24px;
+      box-shadow: var(--shadow);
     }
 
-    .hidden { display: none !important; }
+    .logo {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .tagline {
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--white);
+      border-radius: 12px;
+      padding: 13px;
+      outline: none;
+      color: var(--stone);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--clay);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 17px;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--clay);
+      color: white;
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-red {
+      background: var(--red);
+      color: white;
+    }
+
+    .btn-dark {
+      background: var(--stone);
+      color: white;
+    }
+
+    .btn-light {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--stone);
+    }
 
     .message {
-      margin-top: 12px;
-      padding: 11px 12px;
+      margin-top: 15px;
+      padding: 11px 13px;
       border-radius: 10px;
-      font-size: 12px;
-      line-height: 1.45;
+      font-size: 14px;
       display: none;
     }
 
-    .message.show { display: block; }
-    .message.success { background: #e0ece3; color: var(--green); }
-    .message.error { background: #f6e9e6; color: var(--red); }
-    .message.info { background: #e8e1d5; color: var(--muted); }
+    .message.error {
+      display: block;
+      background: #f8e5e2;
+      color: var(--red);
+    }
 
-    .dashboard-head {
+    .message.success {
+      display: block;
+      background: #e3f0e8;
+      color: var(--green);
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    #app {
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--stone);
+      color: white;
+      padding: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: auto;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
+      align-items: center;
+      gap: 15px;
     }
 
-    .dashboard-head h2 {
-      margin: 0;
-      font-size: 19px;
+    .header-title {
+      font-size: 22px;
+      font-weight: 800;
     }
 
-    .user-email {
+    .header-subtitle {
+      font-size: 12px;
+      color: #cfc8bd;
       margin-top: 3px;
-      color: var(--muted);
-      font-size: 11px;
-      overflow-wrap: anywhere;
     }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #625e58;
+      color: white;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px 15px 50px;
+    }
+
+    /* =========================
+       STATS
+    ========================= */
 
     .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 9px;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .stat {
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
       background: var(--card);
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 20px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .upload-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .file-picker {
-      padding: 12px;
-      border: 1px dashed var(--border);
-      border-radius: 11px;
-      background: var(--white);
-    }
-
-    .selected-file {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 11px;
-      overflow-wrap: anywhere;
-    }
-
-    .progress {
-      display: none;
-      height: 7px;
-      margin-top: 13px;
-      overflow: hidden;
-      border-radius: 99px;
-      background: #ddd5c8;
-    }
-
-    .progress.show { display: block; }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: var(--green);
-      transition: width .2s ease;
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .toolbar input { flex: 1; }
-
-    .file-row {
-      padding: 14px;
       border: 1px solid var(--border);
       border-radius: 15px;
-      background: var(--white);
-      margin-bottom: 9px;
+      padding: 15px;
     }
 
-    .file-row-top {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .pdf-icon {
-      width: 37px;
-      height: 37px;
-      flex-shrink: 0;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: #e8d5c9;
-      color: var(--red);
-      font-size: 10px;
+    .stat-number {
+      font-size: 25px;
       font-weight: 800;
     }
 
-    .file-info {
-      min-width: 0;
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    /* =========================
+       SECTIONS
+    ========================= */
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 15px rgba(28, 26, 23, 0.03);
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    /* =========================
+       PDF LIST
+    ========================= */
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .toolbar input {
       flex: 1;
     }
 
-    .file-title {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
+    .pdf-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
     }
 
-    .file-meta {
-      margin: 4px 0 0;
+    .pdf-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .pdf-title {
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 7px;
+      word-break: break-word;
+    }
+
+    .pdf-meta {
       color: var(--muted);
-      font-size: 10px;
-      line-height: 1.4;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
-    .tags {
+    .badges {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 7px;
+      gap: 6px;
+      margin: 8px 0;
     }
 
-    .tag {
-      padding: 4px 7px;
-      border-radius: 999px;
-      background: #e9e1d4;
-      color: var(--muted);
-      font-size: 9px;
+    .badge {
+      background: var(--sand);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 11px;
       font-weight: 700;
     }
 
-    .row-actions {
+    .actions {
       display: flex;
+      flex-wrap: wrap;
       gap: 7px;
-      margin-top: 11px;
+      margin-top: 12px;
     }
 
-    .row-actions .button {
-      flex: 1;
-      min-height: 37px;
-      font-size: 11px;
-    }
-
-    .empty {
-      padding: 25px;
-      text-align: center;
-      color: var(--muted);
-      border: 1px dashed var(--border);
-      border-radius: 14px;
+    .actions .btn {
+      padding: 8px 11px;
       font-size: 12px;
     }
 
-    .footer {
-      padding: 20px 0;
+    .empty {
       text-align: center;
+      padding: 30px 15px;
       color: var(--muted);
-      font-size: 10px;
     }
 
-    @media (max-width: 560px) {
-      .upload-row {
-        grid-template-columns: 1fr;
-      }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+    }
 
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 600px) {
       .stats {
         grid-template-columns: 1fr 1fr 1fr;
       }
 
-      .dashboard-head {
+      .stat {
+        padding: 11px;
+      }
+
+      .stat-number {
+        font-size: 21px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .header-inner {
         align-items: flex-start;
+      }
+
+      .header-title {
+        font-size: 19px;
+      }
+
+      .logout-btn {
+        font-size: 12px;
       }
     }
   </style>
@@ -378,471 +406,598 @@
 
 <body>
 
-<div id="login-view" class="login-wrap">
-  <div class="app login-card">
+  <!-- =========================
+       LOGIN SCREEN
+  ========================= -->
 
-    <div class="panel">
-      <div class="topbar">
-        <div class="brand">
-          <h1>Busy Brains Admin</h1>
-          <p>Manage the public PDF library.</p>
-        </div>
-        <div class="brand-mark">BB</div>
+  <section id="loginScreen">
+
+    <div class="login-card">
+
+      <div class="logo">Busy Brains</div>
+
+      <div class="tagline">
+        Admin Dashboard
       </div>
 
-      <div class="field">
-        <label for="login-email">Admin email</label>
-        <input id="login-email" type="email" autocomplete="username">
-      </div>
+      <form id="loginForm">
 
-      <div class="field">
-        <label for="login-password">Password</label>
-        <input id="login-password" type="password" autocomplete="current-password">
-      </div>
-
-      <button id="login-button" class="button button-primary">
-        Sign in
-      </button>
-
-      <div id="login-message" class="message"></div>
-    </div>
-
-    <div class="footer">Busy Brains Admin</div>
-  </div>
-</div>
-
-
-<div id="admin-view" class="hidden">
-
-  <div class="app">
-
-    <header class="topbar">
-      <div class="brand">
-        <h1>Busy Brains Admin</h1>
-        <p id="admin-email" class="user-email"></p>
-      </div>
-
-      <button id="logout-button" class="button button-ghost">
-        Logout
-      </button>
-    </header>
-
-
-    <div class="stats">
-      <div class="stat">
-        <strong id="total-count">0</strong>
-        <span>Total PDFs</span>
-      </div>
-
-      <div class="stat">
-        <strong id="wassce-count">0</strong>
-        <span>WASSCE Trials</span>
-      </div>
-
-      <div class="stat">
-        <strong id="subject-count">0</strong>
-        <span>Subjects</span>
-      </div>
-    </div>
-
-
-    <!-- UPLOAD -->
-
-    <section class="panel">
-
-      <h2>Upload PDF</h2>
-
-      <p class="panel-subtitle">
-        Upload a PDF and the public Busy Brains website will
-        automatically place it in the correct sections.
-      </p>
-
-      <div class="field">
-        <label for="pdf-title">Title</label>
-        <input
-          id="pdf-title"
-          type="text"
-          placeholder="e.g. WASSCE Physics Trial Paper 1"
-        >
-      </div>
-
-
-      <div class="upload-row">
-
-        <div class="field">
-          <label for="pdf-subject">Subject</label>
-
-          <select id="pdf-subject">
-            <option value="">Select subject</option>
-            <option>English Language</option>
-            <option>Core Mathematics</option>
-            <option>Integrated Science</option>
-            <option>Social Studies</option>
-            <option>Physics</option>
-            <option>Chemistry</option>
-            <option>Biology</option>
-            <option>Information and Communication Technology</option>
-            <option>Additional Mathematics</option>
-            <option>Agricultural Science</option>
-            <option>Economics</option>
-            <option>Geography</option>
-            <option>Government</option>
-            <option>Business Management</option>
-            <option>Accounting</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-
-        <div class="field">
-          <label for="pdf-type">Type</label>
-
-          <select id="pdf-type">
-            <option value="">Select type</option>
-            <option>Notes</option>
-            <option>Past Questions</option>
-            <option>WASSCE Trial Paper</option>
-            <option>Revision Material</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-      </div>
-
-
-      <div class="field">
-        <label for="pdf-meta">Description / Meta</label>
-
-        <textarea
-          id="pdf-meta"
-          placeholder="Optional. Example: Physics • Trial Paper 1 • 2026"
-        ></textarea>
-      </div>
-
-
-      <div class="field">
-        <label for="pdf-file">PDF file</label>
-
-        <div class="file-picker">
-
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
           <input
-            id="pdf-file"
-            type="file"
-            accept="application/pdf,.pdf"
+            id="loginEmail"
+            type="email"
+            placeholder="Admin email"
+            required
           >
-
-          <div
-            id="selected-file"
-            class="selected-file"
-          >
-            No file selected.
-          </div>
-
         </div>
-      </div>
 
-
-      <button
-        id="upload-button"
-        class="button button-primary"
-      >
-        Upload PDF
-      </button>
-
-
-      <div id="upload-progress" class="progress">
-        <div
-          id="upload-progress-bar"
-          class="progress-bar"
-        ></div>
-      </div>
-
-
-      <div id="upload-message" class="message"></div>
-
-    </section>
-
-
-    <!-- MANAGE -->
-
-    <section class="panel">
-
-      <h2>Manage PDFs</h2>
-
-      <p class="panel-subtitle">
-        Edit information or remove a PDF from the public library.
-      </p>
-
-
-      <div class="toolbar">
-
-        <input
-          id="admin-search"
-          type="search"
-          placeholder="Search PDFs..."
-        >
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input
+            id="loginPassword"
+            type="password"
+            placeholder="Password"
+            required
+          >
+        </div>
 
         <button
-          id="refresh-button"
-          class="button button-ghost"
+          id="loginButton"
+          class="btn btn-primary"
+          type="submit"
         >
-          Refresh
+          Login
+        </button>
+
+      </form>
+
+      <div id="loginMessage" class="message"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       ADMIN APP
+  ========================= -->
+
+  <div id="app" class="hidden">
+
+    <header>
+
+      <div class="header-inner">
+
+        <div>
+          <div class="header-title">
+            Busy Brains Admin
+          </div>
+
+          <div class="header-subtitle">
+            Manage your study PDF library
+          </div>
+        </div>
+
+        <button
+          id="logoutButton"
+          class="logout-btn"
+        >
+          Logout
         </button>
 
       </div>
 
+    </header>
 
-      <div id="files-list">
-        <div class="empty">
-          Loading PDFs...
+
+    <main>
+
+      <!-- STATS -->
+
+      <div class="stats">
+
+        <div class="stat">
+          <div
+            id="totalCount"
+            class="stat-number"
+          >
+            0
+          </div>
+
+          <div class="stat-label">
+            Total PDFs
+          </div>
         </div>
+
+
+        <div class="stat">
+          <div
+            id="trialCount"
+            class="stat-number"
+          >
+            0
+          </div>
+
+          <div class="stat-label">
+            Trial Papers
+          </div>
+        </div>
+
+
+        <div class="stat">
+          <div
+            id="subjectCount"
+            class="stat-number"
+          >
+            0
+          </div>
+
+          <div class="stat-label">
+            Subjects
+          </div>
+        </div>
+
       </div>
 
-    </section>
+
+      <!-- UPLOAD -->
+
+      <section class="section">
+
+        <div class="section-title">
+          Upload PDF
+        </div>
+
+        <form id="uploadForm">
+
+          <div class="grid">
+
+            <div class="form-group">
+              <label for="title">
+                PDF Title
+              </label>
+
+              <input
+                id="title"
+                type="text"
+                placeholder="e.g. Chemistry WASSCE Trial Paper 2026"
+                required
+              >
+            </div>
 
 
-    <footer class="footer">
-      Busy Brains Admin
-    </footer>
+            <div class="form-group">
+              <label for="subject">
+                Subject
+              </label>
+
+              <select id="subject">
+
+                <option value="">
+                  Select subject
+                </option>
+
+                <option>Mathematics</option>
+                <option>Additional Mathematics</option>
+                <option>English</option>
+                <option>Physics</option>
+                <option>Chemistry</option>
+                <option>Biology</option>
+                <option>Integrated Science</option>
+                <option>Social Studies</option>
+                <option>ICT</option>
+                <option>Geography</option>
+                <option>Economics</option>
+                <option>Government</option>
+                <option>History</option>
+                <option>Agricultural Science</option>
+                <option>Business</option>
+                <option>French</option>
+                <option>Other</option>
+
+              </select>
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="type">
+                PDF Type
+              </label>
+
+              <select id="type">
+
+                <option value="Study Material">
+                  Study Material
+                </option>
+
+                <option value="WASSCE Trial Paper">
+                  WASSCE Trial Paper
+                </option>
+
+                <option value="Notes">
+                  Notes
+                </option>
+
+                <option value="Past Questions">
+                  Past Questions
+                </option>
+
+                <option value="Revision">
+                  Revision
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="pdfFile">
+                PDF File
+              </label>
+
+              <input
+                id="pdfFile"
+                type="file"
+                accept="application/pdf,.pdf"
+                required
+              >
+
+            </div>
+
+
+            <div class="form-group full">
+
+              <label for="meta">
+                Description / Information
+              </label>
+
+              <textarea
+                id="meta"
+                placeholder="Example: WASSCE-style Chemistry practice questions for SHS students."
+              ></textarea>
+
+            </div>
+
+          </div>
+
+
+          <button
+            id="uploadButton"
+            class="btn btn-green"
+            type="submit"
+          >
+            Upload PDF
+          </button>
+
+        </form>
+
+        <div
+          id="uploadMessage"
+          class="message"
+        ></div>
+
+      </section>
+
+
+      <!-- PDF LIBRARY -->
+
+      <section class="section">
+
+        <div class="section-title">
+          PDF Library
+        </div>
+
+        <div class="toolbar">
+
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search PDFs..."
+          >
+
+          <button
+            id="refreshButton"
+            class="btn btn-light"
+          >
+            Refresh
+          </button>
+
+        </div>
+
+
+        <div
+          id="pdfList"
+          class="pdf-list"
+        >
+
+          <div class="loading">
+            Loading PDFs...
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
 
   </div>
 
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  /* =========================================================
-     SUPABASE
-  ========================================================== */
+/* =========================================================
+   SUPABASE CONFIGURATION
+   ========================================================= */
 
-  const SUPABASE_URL =
-    "https://welffszyuonqjdhoprxu.supabase.co";
+const SUPABASE_URL =
+  "https://welffszyuonqjdhoprxu.supabase.co";
 
-  const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlbGZmc3p5dW9ucWpkaG9wcnh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNzQyNjksImV4cCI6MjEwNTk1MDI2OX0.D8zoTo_kKke-nwL3fQG0vk_Ccf1WrqDOgmh0_Vq6TL4";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlbGZmc3p5dW9ucWpkaG9wcnh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNzQyNjksImV4cCI6MjEwNTk1MDI2OX0.D8zoTo_kKke-nwL3fQG0vk_Ccf1WrqDOgmh0_Vq6TL4";
 
-  const BUCKET = "pdfs";
+const BUCKET = "pdfs";
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
+
+/* =========================================================
+   SUPABASE CLIENT
+   ========================================================= */
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const loginScreen =
+  document.getElementById("loginScreen");
+
+const app =
+  document.getElementById("app");
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const loginEmail =
+  document.getElementById("loginEmail");
+
+const loginPassword =
+  document.getElementById("loginPassword");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const loginMessage =
+  document.getElementById("loginMessage");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const uploadForm =
+  document.getElementById("uploadForm");
+
+const uploadButton =
+  document.getElementById("uploadButton");
+
+const uploadMessage =
+  document.getElementById("uploadMessage");
+
+const pdfList =
+  document.getElementById("pdfList");
+
+const searchInput =
+  document.getElementById("searchInput");
+
+const refreshButton =
+  document.getElementById("refreshButton");
+
+const totalCount =
+  document.getElementById("totalCount");
+
+const trialCount =
+  document.getElementById("trialCount");
+
+const subjectCount =
+  document.getElementById("subjectCount");
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function showMessage(element, message, type) {
+
+  element.textContent = message;
+
+  element.className =
+    "message " + type;
+
+}
+
+
+function hideMessage(element) {
+
+  element.textContent = "";
+
+  element.className = "message";
+
+}
+
+
+function escapeHtml(value) {
+
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function safeFileName(name) {
+
+  return name
+    .replace(/[^a-zA-Z0-9._-]/g, "_")
+    .replace(/_+/g, "_");
+}
+
+
+/* =========================================================
+   AUTH
+   ========================================================= */
+
+async function checkCurrentSession() {
+
+  const {
+    data,
+    error
+  } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.error(error);
+    showLogin();
+    return;
+  }
+
+  if (data.session) {
+
+    await checkAdmin();
+
+  } else {
+
+    showLogin();
+
+  }
+}
+
+
+/* =========================================================
+   CHECK ADMIN
+   ========================================================= */
+
+async function checkAdmin() {
+
+  const {
+    data: {
+      user
+    }
+  } = await supabaseClient.auth.getUser();
+
+
+  if (!user) {
+
+    showLogin();
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("admins")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(error);
+
+    await supabaseClient.auth.signOut();
+
+    showLogin();
+
+    showMessage(
+      loginMessage,
+      "Could not verify admin account: " + error.message,
+      "error"
     );
 
+    return;
 
-  /* =========================================================
-     STATE
-  ========================================================== */
-
-  let currentUser = null;
-  let allFiles = [];
-
-
-  /* =========================================================
-     ELEMENTS
-  ========================================================== */
-
-  const loginView =
-    document.getElementById("login-view");
-
-  const adminView =
-    document.getElementById("admin-view");
-
-  const loginEmail =
-    document.getElementById("login-email");
-
-  const loginPassword =
-    document.getElementById("login-password");
-
-  const loginButton =
-    document.getElementById("login-button");
-
-  const loginMessage =
-    document.getElementById("login-message");
-
-  const logoutButton =
-    document.getElementById("logout-button");
-
-  const adminEmail =
-    document.getElementById("admin-email");
-
-  const pdfTitle =
-    document.getElementById("pdf-title");
-
-  const pdfSubject =
-    document.getElementById("pdf-subject");
-
-  const pdfType =
-    document.getElementById("pdf-type");
-
-  const pdfMeta =
-    document.getElementById("pdf-meta");
-
-  const pdfFile =
-    document.getElementById("pdf-file");
-
-  const selectedFile =
-    document.getElementById("selected-file");
-
-  const uploadButton =
-    document.getElementById("upload-button");
-
-  const uploadMessage =
-    document.getElementById("upload-message");
-
-  const uploadProgress =
-    document.getElementById("upload-progress");
-
-  const uploadProgressBar =
-    document.getElementById("upload-progress-bar");
-
-  const filesList =
-    document.getElementById("files-list");
-
-  const adminSearch =
-    document.getElementById("admin-search");
-
-  const refreshButton =
-    document.getElementById("refresh-button");
-
-  const totalCount =
-    document.getElementById("total-count");
-
-  const wassceCount =
-    document.getElementById("wassce-count");
-
-  const subjectCount =
-    document.getElementById("subject-count");
-
-
-  /* =========================================================
-     HELPERS
-  ========================================================== */
-
-  function normalize(value) {
-    return String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, " ");
   }
 
 
-  function escapeHtml(value) {
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+  if (!data) {
+
+    await supabaseClient.auth.signOut();
+
+    showLogin();
+
+    showMessage(
+      loginMessage,
+      "This account is not registered as a Busy Brains admin.",
+      "error"
+    );
+
+    return;
+
   }
 
 
-  function showMessage(element, text, type) {
-    element.textContent = text;
-    element.className = "message show " + type;
-  }
+  showApp();
+
+}
 
 
-  function clearMessage(element) {
-    element.textContent = "";
-    element.className = "message";
-  }
+/* =========================================================
+   SHOW / HIDE SCREENS
+   ========================================================= */
+
+function showLogin() {
+
+  loginScreen.classList.remove("hidden");
+
+  app.classList.add("hidden");
+
+}
 
 
-  function safeFileName(name) {
-    return String(name || "file.pdf")
-      .replace(/[<>:"/\\|?*]+/g, "_")
-      .replace(/\s+/g, "_")
-      .slice(0, 150);
-  }
+function showApp() {
+
+  loginScreen.classList.add("hidden");
+
+  app.classList.remove("hidden");
+
+  loadFiles();
+
+}
 
 
-  /* =========================================================
-     ADMIN CHECK
-  ========================================================== */
+/* =========================================================
+   LOGIN
+   ========================================================= */
 
-  async function checkAdmin() {
+loginForm.addEventListener(
+  "submit",
+  async function(event) {
 
-    const {
-      data: userData,
-      error: userError
-    } = await supabaseClient.auth.getUser();
+    event.preventDefault();
 
-    if (
-      userError ||
-      !userData.user
-    ) {
-      showLogin();
-      return false;
-    }
+    hideMessage(loginMessage);
 
-    const user =
-      userData.user;
+    loginButton.disabled = true;
+    loginButton.textContent = "Logging in...";
 
-    const {
-      data: adminRow,
-      error: adminError
-    } = await supabaseClient
-      .from("admins")
-      .select("user_id")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-
-    if (
-      adminError ||
-      !adminRow
-    ) {
-
-      await supabaseClient.auth.signOut();
-
-      showLogin();
-
-      showMessage(
-        loginMessage,
-        "This account is not authorized as an admin.",
-        "error"
-      );
-
-      return false;
-    }
-
-
-    currentUser = user;
-
-    showAdmin();
-
-    return true;
-  }
-
-
-  /* =========================================================
-     LOGIN
-  ========================================================== */
-
-  loginButton.addEventListener(
-    "click",
-    login
-  );
-
-
-  loginPassword.addEventListener(
-    "keydown",
-    event => {
-
-      if (event.key === "Enter") {
-        login();
-      }
-
-    }
-  );
-
-
-  async function login() {
-
-    clearMessage(loginMessage);
 
     const email =
       loginEmail.value.trim();
@@ -851,44 +1006,15 @@
       loginPassword.value;
 
 
-    if (
-      !email ||
-      !password
-    ) {
-
-      showMessage(
-        loginMessage,
-        "Enter your email and password.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    loginButton.disabled = true;
-
-    loginButton.textContent =
-      "Signing in...";
-
-
     const {
-      data,
       error
-    } =
-      await supabaseClient.auth
-        .signInWithPassword({
-          email,
-          password
-        });
+    } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
 
 
     if (error) {
-
-      loginButton.disabled = false;
-
-      loginButton.textContent =
-        "Sign in";
 
       showMessage(
         loginMessage,
@@ -896,213 +1022,342 @@
         "error"
       );
 
-      return;
-    }
-
-
-    currentUser =
-      data.user;
-
-
-    const authorized =
-      await checkAdmin();
-
-
-    if (!authorized) {
-
       loginButton.disabled = false;
-
-      loginButton.textContent =
-        "Sign in";
+      loginButton.textContent = "Login";
 
       return;
+
     }
+
+
+    await checkAdmin();
 
 
     loginButton.disabled = false;
+    loginButton.textContent = "Login";
 
-    loginButton.textContent =
-      "Sign in";
   }
+);
 
 
-  /* =========================================================
-     LOGOUT
-  ========================================================== */
+/* =========================================================
+   LOGOUT
+   ========================================================= */
 
-  logoutButton.addEventListener(
-    "click",
-    async () => {
+logoutButton.addEventListener(
+  "click",
+  async function() {
 
-      await supabaseClient.auth.signOut();
+    await supabaseClient.auth.signOut();
 
-      currentUser = null;
+    showLogin();
 
-      showLogin();
-    }
-  );
-
-
-  /* =========================================================
-     VIEW SWITCHING
-  ========================================================== */
-
-  function showLogin() {
-
-    loginView.classList.remove(
-      "hidden"
-    );
-
-    adminView.classList.add(
-      "hidden"
-    );
   }
+);
 
 
-  function showAdmin() {
+/* =========================================================
+   LOAD FILES
+   ========================================================= */
 
-    loginView.classList.add(
-      "hidden"
-    );
-
-    adminView.classList.remove(
-      "hidden"
-    );
-
-    adminEmail.textContent =
-      currentUser?.email || "";
-
-    loadFiles();
-  }
+let allFiles = [];
 
 
-  /* =========================================================
-     FILE SELECT
-  ========================================================== */
+async function loadFiles() {
 
-  pdfFile.addEventListener(
-    "change",
-    () => {
+  pdfList.innerHTML =
+    '<div class="loading">Loading PDFs...</div>';
 
-      const file =
-        pdfFile.files[0];
 
-      if (!file) {
-
-        selectedFile.textContent =
-          "No file selected.";
-
-        return;
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("files")
+    .select(
+      "id, title, subject, type, meta, storage_path, created_at"
+    )
+    .order(
+      "created_at",
+      {
+        ascending: false
       }
+    );
 
 
-      selectedFile.textContent =
-        `${file.name} • ${formatBytes(file.size)}`;
-    }
-  );
+  if (error) {
 
+    console.error(error);
 
-  function formatBytes(bytes) {
+    pdfList.innerHTML = `
+      <div class="empty">
+        Failed to load PDFs.<br><br>
+        ${escapeHtml(error.message)}
+      </div>
+    `;
 
-    if (!bytes) {
-      return "0 B";
-    }
+    return;
 
-    const units =
-      ["B", "KB", "MB", "GB"];
-
-    const index =
-      Math.floor(
-        Math.log(bytes) /
-        Math.log(1024)
-      );
-
-    return (
-      Math.round(
-        bytes /
-        Math.pow(1024, index) *
-        10
-      ) / 10
-    ) + " " + units[index];
   }
 
 
-  /* =========================================================
-     UPLOAD
-  ========================================================== */
+  allFiles = data || [];
 
-  uploadButton.addEventListener(
-    "click",
-    uploadPdf
-  );
+  updateStats();
+
+  renderFiles(allFiles);
+
+}
 
 
-  async function uploadPdf() {
+/* =========================================================
+   STATS
+   ========================================================= */
 
-    clearMessage(uploadMessage);
+function updateStats() {
+
+  totalCount.textContent =
+    allFiles.length;
+
+
+  const trials =
+    allFiles.filter(
+      file =>
+        String(file.type || "")
+          .toLowerCase()
+          .includes("trial")
+    ).length;
+
+
+  trialCount.textContent =
+    trials;
+
+
+  const subjects =
+    new Set(
+      allFiles
+        .map(file => file.subject)
+        .filter(Boolean)
+    );
+
+
+  subjectCount.textContent =
+    subjects.size;
+
+}
+
+
+/* =========================================================
+   RENDER FILES
+   ========================================================= */
+
+function renderFiles(files) {
+
+  if (!files.length) {
+
+    pdfList.innerHTML = `
+      <div class="empty">
+        No PDFs yet.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  pdfList.innerHTML =
+    files.map(file => {
+
+      const date =
+        file.created_at
+          ? new Date(file.created_at)
+              .toLocaleDateString()
+          : "";
+
+
+      return `
+        <div class="pdf-card">
+
+          <div class="pdf-title">
+            ${escapeHtml(file.title)}
+          </div>
+
+          <div class="badges">
+
+            ${
+              file.subject
+                ? `<span class="badge">
+                    ${escapeHtml(file.subject)}
+                   </span>`
+                : ""
+            }
+
+            ${
+              file.type
+                ? `<span class="badge">
+                    ${escapeHtml(file.type)}
+                   </span>`
+                : ""
+            }
+
+          </div>
+
+
+          <div class="pdf-meta">
+
+            ${
+              file.meta
+                ? escapeHtml(file.meta)
+                : "No description."
+            }
+
+            <br><br>
+
+            Added:
+            ${escapeHtml(date)}
+
+          </div>
+
+
+          <div class="actions">
+
+            <button
+              class="btn btn-light"
+              onclick="editFile('${escapeHtml(file.id)}')"
+            >
+              Edit
+            </button>
+
+            <button
+              class="btn btn-dark"
+              onclick="downloadFile('${escapeHtml(file.id)}')"
+            >
+              Download
+            </button>
+
+            <button
+              class="btn btn-red"
+              onclick="deleteFile('${escapeHtml(file.id)}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+searchInput.addEventListener(
+  "input",
+  function() {
+
+    const query =
+      searchInput.value
+        .trim()
+        .toLowerCase();
+
+
+    if (!query) {
+
+      renderFiles(allFiles);
+      return;
+
+    }
+
+
+    const filtered =
+      allFiles.filter(file => {
+
+        return [
+
+          file.title,
+          file.subject,
+          file.type,
+          file.meta
+
+        ]
+          .filter(Boolean)
+          .some(value =>
+            String(value)
+              .toLowerCase()
+              .includes(query)
+          );
+
+      });
+
+
+    renderFiles(filtered);
+
+  }
+);
+
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
+
+refreshButton.addEventListener(
+  "click",
+  loadFiles
+);
+
+
+/* =========================================================
+   UPLOAD PDF
+   ========================================================= */
+
+uploadForm.addEventListener(
+  "submit",
+  async function(event) {
+
+    event.preventDefault();
+
+    hideMessage(uploadMessage);
 
 
     const title =
-      pdfTitle.value.trim();
+      document.getElementById("title")
+        .value.trim();
 
     const subject =
-      pdfSubject.value.trim();
+      document.getElementById("subject")
+        .value;
 
     const type =
-      pdfType.value.trim();
+      document.getElementById("type")
+        .value;
 
     const meta =
-      pdfMeta.value.trim();
+      document.getElementById("meta")
+        .value.trim();
+
+    const fileInput =
+      document.getElementById("pdfFile");
 
     const file =
-      pdfFile.files[0];
-
-
-    if (!title) {
-
-      showMessage(
-        uploadMessage,
-        "Enter a title.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    if (!subject) {
-
-      showMessage(
-        uploadMessage,
-        "Select a subject.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    if (!type) {
-
-      showMessage(
-        uploadMessage,
-        "Select a type.",
-        "error"
-      );
-
-      return;
-    }
+      fileInput.files[0];
 
 
     if (!file) {
 
       showMessage(
         uploadMessage,
-        "Select a PDF file.",
+        "Please select a PDF file.",
         "error"
       );
 
       return;
+
     }
 
 
@@ -1118,126 +1373,121 @@
       );
 
       return;
+
     }
 
 
     /*
-      Supabase free storage limits can vary by plan.
-      Keep the browser-side check modest; the server
-      remains the final authority.
+      50 MB browser-side safety limit.
     */
 
-    if (
-      file.size > 50 * 1024 * 1024
-    ) {
+    const maxSize =
+      50 * 1024 * 1024;
+
+
+    if (file.size > maxSize) {
 
       showMessage(
         uploadMessage,
-        "This file is larger than 50 MB.",
+        "The PDF is larger than 50 MB.",
         "error"
       );
 
       return;
+
     }
 
 
     uploadButton.disabled = true;
-
-    uploadButton.textContent =
-      "Uploading...";
-
-
-    uploadProgress.classList.add(
-      "show"
-    );
-
-    uploadProgressBar.style.width =
-      "10%";
+    uploadButton.textContent = "Uploading...";
 
 
     try {
 
-      const extension =
-        ".pdf";
+      /*
+        Generate unique storage path.
+      */
+
+      const uniqueId =
+        crypto.randomUUID();
+
+
+      const cleanName =
+        safeFileName(file.name);
 
 
       const storagePath =
-        `uploads/${crypto.randomUUID()}-${safeFileName(
-          file.name.replace(
-            /\.pdf$/i,
-            ""
-          )
-        )}${extension}`;
+        `uploads/${uniqueId}-${cleanName}`;
 
 
-      uploadProgressBar.style.width =
-        "30%";
-
+      /*
+        Upload PDF to Supabase Storage.
+      */
 
       const {
-        error: uploadError
-      } =
-        await supabaseClient
-          .storage
-          .from(BUCKET)
-          .upload(
-            storagePath,
-            file,
-            {
-              contentType:
-                "application/pdf",
-              upsert: false
-            }
-          );
+        error: storageError
+      } = await supabaseClient
+        .storage
+        .from(BUCKET)
+        .upload(
+          storagePath,
+          file,
+          {
+            contentType: "application/pdf",
+            upsert: false
+          }
+        );
 
 
-      if (uploadError) {
-        throw uploadError;
+      if (storageError) {
+
+        throw new Error(
+          "Storage upload failed: " +
+          storageError.message
+        );
+
       }
 
 
-      uploadProgressBar.style.width =
-        "70%";
-
+      /*
+        Add PDF information to database.
+      */
 
       const {
-        error: insertError
-      } =
-        await supabaseClient
-          .from("files")
-          .insert({
-            title,
-            subject,
-            type,
-            meta:
-              meta ||
-              `${subject} • ${type}`,
-            storage_path:
-              storagePath
-          });
+        error: databaseError
+      } = await supabaseClient
+        .from("files")
+        .insert({
+
+          title,
+          subject: subject || null,
+          type: type || null,
+          meta: meta || null,
+          storage_path: storagePath
+
+        });
 
 
-      if (insertError) {
+      if (databaseError) {
 
         /*
           If database insertion fails,
-          remove the uploaded object so
-          an orphaned PDF is not left behind.
+          remove the uploaded file so we
+          don't leave an orphaned PDF.
         */
 
         await supabaseClient
           .storage
           .from(BUCKET)
-          .remove([
-            storagePath
-          ]);
+          .remove([storagePath]);
 
-        throw insertError;
+
+        throw new Error(
+          "Database insert failed: " +
+          databaseError.message
+        );
+
       }
-
-
-      uploadProgressBar.style.width =
-        "100%";
 
 
       showMessage(
@@ -1247,14 +1497,7 @@
       );
 
 
-      pdfTitle.value = "";
-      pdfSubject.value = "";
-      pdfType.value = "";
-      pdfMeta.value = "";
-      pdfFile.value = "";
-
-      selectedFile.textContent =
-        "No file selected.";
+      uploadForm.reset();
 
 
       await loadFiles();
@@ -1264,544 +1507,335 @@
 
       console.error(error);
 
-
       showMessage(
         uploadMessage,
-        error.message ||
-          "Upload failed.",
+        error.message || "Upload failed.",
         "error"
       );
 
-    } finally {
-
-      uploadButton.disabled =
-        false;
-
-      uploadButton.textContent =
-        "Upload PDF";
-
-      setTimeout(
-        () => {
-
-          uploadProgress.classList.remove(
-            "show"
-          );
-
-          uploadProgressBar.style.width =
-            "0%";
-
-        },
-        700
-      );
     }
+
+
+    uploadButton.disabled = false;
+    uploadButton.textContent = "Upload PDF";
+
+  }
+);
+
+
+/* =========================================================
+   DOWNLOAD FILE
+   ========================================================= */
+
+async function downloadFile(id) {
+
+  const file =
+    allFiles.find(
+      item => item.id === id
+    );
+
+
+  if (!file) {
+
+    alert("PDF not found.");
+    return;
+
   }
 
 
-  /* =========================================================
-     LOAD FILES
-  ========================================================== */
-
-  refreshButton.addEventListener(
-    "click",
-    loadFiles
-  );
-
-
-  async function loadFiles() {
-
-    filesList.innerHTML =
-      '<div class="empty">Loading PDFs...</div>';
-
+  try {
 
     const {
       data,
       error
-    } =
-      await supabaseClient
-        .from("files")
-        .select(
-          "id, title, meta, storage_path, subject, type, created_at"
-        )
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        );
+    } = await supabaseClient
+      .storage
+      .from(BUCKET)
+      .download(
+        file.storage_path
+      );
 
 
     if (error) {
 
-      console.error(error);
+      throw error;
 
-      filesList.innerHTML = `
-        <div class="message show error">
-          ${escapeHtml(error.message)}
-        </div>
-      `;
-
-      return;
     }
 
 
-    allFiles =
-      data || [];
+    const url =
+      URL.createObjectURL(data);
 
 
-    updateStats();
+    const link =
+      document.createElement("a");
 
-    renderFiles();
+    link.href = url;
+
+    link.download =
+      safeFileName(
+        file.title + ".pdf"
+      );
+
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+
+    setTimeout(
+      () => URL.revokeObjectURL(url),
+      10000
+    );
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Could not download PDF: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   EDIT FILE
+   ========================================================= */
+
+async function editFile(id) {
+
+  const file =
+    allFiles.find(
+      item => item.id === id
+    );
+
+
+  if (!file) {
+
+    alert("PDF not found.");
+    return;
+
   }
 
 
-  /* =========================================================
-     STATS
-  ========================================================== */
-
-  function updateStats() {
-
-    totalCount.textContent =
-      allFiles.length;
+  const newTitle =
+    prompt(
+      "PDF title:",
+      file.title || ""
+    );
 
 
-    wassceCount.textContent =
-      allFiles.filter(
-        file =>
-          normalize(file.type) ===
-          "wassce trial paper"
-      ).length;
-
-
-    const subjects =
-      new Set(
-        allFiles
-          .map(
-            file =>
-              String(
-                file.subject || ""
-              ).trim()
-          )
-          .filter(Boolean)
-      );
-
-
-    subjectCount.textContent =
-      subjects.size;
+  if (newTitle === null) {
+    return;
   }
 
 
-  /* =========================================================
-     SEARCH
-  ========================================================== */
-
-  adminSearch.addEventListener(
-    "input",
-    renderFiles
-  );
+  const newSubject =
+    prompt(
+      "Subject:",
+      file.subject || ""
+    );
 
 
-  function renderFiles() {
-
-    const query =
-      normalize(
-        adminSearch.value
-      );
-
-
-    const files =
-      allFiles.filter(
-        file => {
-
-          if (!query) {
-            return true;
-          }
-
-
-          const text = [
-            file.title,
-            file.meta,
-            file.subject,
-            file.type
-          ]
-            .map(normalize)
-            .join(" ");
-
-
-          return text.includes(
-            query
-          );
-        }
-      );
-
-
-    if (!files.length) {
-
-      filesList.innerHTML =
-        '<div class="empty">No PDFs found.</div>';
-
-      return;
-    }
-
-
-    filesList.innerHTML =
-      files.map(
-        file =>
-          renderFileRow(file)
-      ).join("");
+  if (newSubject === null) {
+    return;
   }
 
 
-  function renderFileRow(file) {
-
-    const title =
-      escapeHtml(
-        file.title ||
-        "Untitled PDF"
-      );
+  const newType =
+    prompt(
+      "Type:",
+      file.type || ""
+    );
 
 
-    const meta =
-      escapeHtml(
-        file.meta ||
-        ""
-      );
-
-
-    const subject =
-      escapeHtml(
-        file.subject ||
-        "Other"
-      );
-
-
-    const type =
-      escapeHtml(
-        file.type ||
-        "Other"
-      );
-
-
-    const date =
-      file.created_at
-        ? new Date(
-            file.created_at
-          ).toLocaleString()
-        : "";
-
-
-    return `
-      <article class="file-row">
-
-        <div class="file-row-top">
-
-          <div class="pdf-icon">
-            PDF
-          </div>
-
-          <div class="file-info">
-
-            <h3 class="file-title">
-              ${title}
-            </h3>
-
-            <p class="file-meta">
-              ${meta}
-            </p>
-
-            <div class="tags">
-
-              <span class="tag">
-                ${subject}
-              </span>
-
-              <span class="tag">
-                ${type}
-              </span>
-
-              ${
-                date
-                  ? `
-                    <span class="tag">
-                      ${escapeHtml(date)}
-                    </span>
-                  `
-                  : ""
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="row-actions">
-
-          <button
-            class="button button-ghost"
-            onclick="editFile('${escapeHtml(file.id)}')"
-          >
-            Edit
-          </button>
-
-          <button
-            class="button button-red"
-            onclick="deleteFile('${escapeHtml(file.id)}')"
-          >
-            Delete
-          </button>
-
-        </div>
-
-      </article>
-    `;
+  if (newType === null) {
+    return;
   }
 
 
-  /* =========================================================
-     EDIT
-  ========================================================== */
+  const newMeta =
+    prompt(
+      "Description:",
+      file.meta || ""
+    );
 
-  window.editFile =
-    async function(fileId) {
 
-      const file =
-        allFiles.find(
-          item =>
-            String(item.id) ===
-            String(fileId)
-        );
+  if (newMeta === null) {
+    return;
+  }
 
 
-      if (!file) {
-        return;
-      }
+  const {
+    error
+  } = await supabaseClient
+    .from("files")
+    .update({
 
+      title:
+        newTitle.trim(),
 
-      const title =
-        prompt(
-          "PDF title:",
-          file.title || ""
-        );
+      subject:
+        newSubject.trim() || null,
 
+      type:
+        newType.trim() || null,
 
-      if (title === null) {
-        return;
-      }
+      meta:
+        newMeta.trim() || null
 
+    })
+    .eq(
+      "id",
+      id
+    );
 
-      const subject =
-        prompt(
-          "Subject:",
-          file.subject || ""
-        );
 
+  if (error) {
 
-      if (subject === null) {
-        return;
-      }
+    alert(
+      "Update failed: " +
+      error.message
+    );
 
+    return;
 
-      const type =
-        prompt(
-          "Type:",
-          file.type || ""
-        );
+  }
 
 
-      if (type === null) {
-        return;
-      }
+  await loadFiles();
 
+}
 
-      const meta =
-        prompt(
-          "Description / Meta:",
-          file.meta || ""
-        );
 
+/* =========================================================
+   DELETE FILE
+   ========================================================= */
 
-      if (meta === null) {
-        return;
-      }
+async function deleteFile(id) {
 
+  const file =
+    allFiles.find(
+      item => item.id === id
+    );
 
-      const {
-        error
-      } =
-        await supabaseClient
-          .from("files")
-          .update({
-            title:
-              title.trim(),
-            subject:
-              subject.trim(),
-            type:
-              type.trim(),
-            meta:
-              meta.trim()
-          })
-          .eq(
-            "id",
-            fileId
-          );
 
+  if (!file) {
 
-      if (error) {
+    alert("PDF not found.");
+    return;
 
-        alert(
-          "Update failed: " +
-          error.message
-        );
+  }
 
-        return;
-      }
 
+  const confirmed =
+    confirm(
+      `Delete "${file.title}"?\n\nThis will remove the PDF from Storage and the database.`
+    );
 
-      await loadFiles();
-    };
 
+  if (!confirmed) {
+    return;
+  }
 
-  /* =========================================================
-     DELETE
-  ========================================================== */
 
-  window.deleteFile =
-    async function(fileId) {
+  try {
 
-      const file =
-        allFiles.find(
-          item =>
-            String(item.id) ===
-            String(fileId)
-        );
-
-
-      if (!file) {
-        return;
-      }
-
-
-      const confirmed =
-        confirm(
-          `Delete "${file.title}"?\n\nThis removes the PDF from the storage bucket and the public library.`
-        );
-
-
-      if (!confirmed) {
-        return;
-      }
-
-
-      /*
-        Delete storage object first.
-      */
-
-      const {
-        error: storageError
-      } =
-        await supabaseClient
-          .storage
-          .from(BUCKET)
-          .remove([
-            file.storage_path
-          ]);
-
-
-      if (storageError) {
-
-        alert(
-          "Could not delete the PDF from storage: " +
-          storageError.message
-        );
-
-        return;
-      }
-
-
-      /*
-        Then delete database record.
-      */
-
-      const {
-        error: dbError
-      } =
-        await supabaseClient
-          .from("files")
-          .delete()
-          .eq(
-            "id",
-            fileId
-          );
-
-
-      if (dbError) {
-
-        alert(
-          "The PDF was removed from storage, but its database record could not be deleted: " +
-          dbError.message
-        );
-
-        return;
-      }
-
-
-      await loadFiles();
-    };
-
-
-  /* =========================================================
-     AUTH STATE
-  ========================================================== */
-
-  supabaseClient.auth.onAuthStateChange(
-    async (event, session) => {
-
-      if (
-        session &&
-        session.user
-      ) {
-
-        /*
-          Do not trust authentication alone.
-          checkAdmin() verifies the admins table.
-        */
-
-        await checkAdmin();
-
-      } else {
-
-        showLogin();
-      }
-    }
-  );
-
-
-  /* =========================================================
-     START
-  ========================================================== */
-
-  (async function start() {
+    /*
+      Delete Storage object first.
+    */
 
     const {
-      data
-    } =
-      await supabaseClient.auth
-        .getSession();
+      error: storageError
+    } = await supabaseClient
+      .storage
+      .from(BUCKET)
+      .remove([
+        file.storage_path
+      ]);
 
 
-    if (
-      data.session
-    ) {
+    if (storageError) {
 
-      await checkAdmin();
+      throw new Error(
+        "Storage deletion failed: " +
+        storageError.message
+      );
 
-    } else {
-
-      showLogin();
     }
 
-  })();
+
+    /*
+      Delete database record.
+    */
+
+    const {
+      error: databaseError
+    } = await supabaseClient
+      .from("files")
+      .delete()
+      .eq(
+        "id",
+        id
+      );
+
+
+    if (databaseError) {
+
+      throw new Error(
+        "Database deletion failed: " +
+        databaseError.message
+      );
+
+    }
+
+
+    await loadFiles();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Delete failed: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH STATE CHANGES
+   ========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+  function(event, session) {
+
+    if (!session) {
+
+      showLogin();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+checkCurrentSession();
 
 </script>
 
